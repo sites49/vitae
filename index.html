@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Vitae: ветклиника в Магадане</title>
+<meta name="description" content="Vitae, Магадан, улица Арманская, 28. Приём, хирургия, анализы, рентген и стационар для кошек, собак и экзотов. Улица Арманская, 28, 1 этаж. Второй телефон: +7 4132 21-11-15.">
+<meta name="theme-color" content="#17110d">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='16' fill='%23e0904a'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Georgia' font-size='17' fill='%23ffffff'%3EV%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair Display:ital,wght@0,500;0,600;1,500&family=Golos+Text:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
+<style>
+:root { --bg: #17110d; --paper: #221913; --ink: #f6ede4; --muted: #b9a898; --acc: #f0a35e; --acc2: #fbd9b3;
+  --line: color-mix(in srgb, var(--ink) 14%, transparent); --fd: "Playfair Display", Georgia, serif; --fb: "Golos Text", system-ui, sans-serif;
+  --wa: #25d366; --tg: #2aabee; --pad: clamp(16px, 4vw, 56px); --r: 10px }
+* { box-sizing: border-box; margin: 0 }
+html { scroll-behavior: smooth; scroll-padding-top: 72px }
+body { background: var(--bg); color: var(--ink); font: 400 17px/1.6 var(--fb); -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums }
+img { display: block; max-width: 100%; height: auto }
+a { color: inherit }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 0 var(--pad) }
+.ico { width: 20px; height: 20px; fill: currentColor; flex: none }
+
+/* шапка поверх первого экрана, при прокрутке получает фон */
+header { position: fixed; inset: 0 0 auto; z-index: 30; border-bottom: 1px solid transparent; transition: background .3s, border-color .3s }
+header.solid { background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px); border-color: var(--line) }
+.bar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 72px }
+.bar nav { display: flex; gap: 26px; font-size: 15px }
+.bar nav a, footer a { text-decoration: none; opacity: .8; transition: opacity .2s }
+.bar nav a:hover, footer a:hover { opacity: 1 }
+.logo { font: 600 30px/1 var(--fd); text-decoration: none; transition: opacity .3s }
+/* название уже крупно на первом экране: в шапке оно появляется только после прокрутки */
+.quiet .logo { opacity: 0; pointer-events: none }
+.quiet header.solid .logo { opacity: 1; pointer-events: auto }
+.bar .right { justify-self: end; display: flex; gap: 10px; align-items: center }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 15px 24px; border-radius: var(--r); border: 1px solid var(--acc);
+  background: var(--acc); color: var(--bg); font: 600 15px/1 var(--fb); text-decoration: none; cursor: pointer; transition: transform .2s, background .2s, border-color .2s }
+.btn:hover { transform: translateY(-2px); background: var(--acc2); border-color: var(--acc2) }
+.btn.ghost { background: color-mix(in srgb, var(--ink) 6%, transparent); color: var(--ink); border-color: color-mix(in srgb, var(--ink) 22%, transparent) }
+.btn.ghost:hover { border-color: var(--acc); background: color-mix(in srgb, var(--ink) 10%, transparent) }
+.btn.sm { padding: 11px 18px; font-size: 14px }
+.sq { width: 42px; height: 42px; border-radius: var(--r); display: grid; place-items: center; border: 1px solid var(--line); text-decoration: none }
+.sq:hover { border-color: var(--acc) }
+
+/* первый экран: размытое тёмное фото, двигается медленнее страницы и уходит в ровный фон */
+.stage { position: relative; overflow: hidden; padding-top: 72px }
+.stage .blur { position: absolute; inset: -12% 0 auto; height: 124%; background: center / cover no-repeat; z-index: -1; will-change: transform }
+/* живой фон: два мягких пятна акцентного цвета медленно плавают, сверху плёночное зерно */
+.stage .glow { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden }
+.stage .glow::before, .stage .glow::after { content: ""; position: absolute; width: 60vmax; height: 60vmax; border-radius: 50%; filter: blur(60px);
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--acc) 60%, transparent), transparent); mix-blend-mode: soft-light }
+.stage .glow::before { left: -15vmax; top: -10vmax; animation: drift 22s ease-in-out infinite alternate }
+.stage .glow::after { right: -20vmax; bottom: -25vmax; animation: drift 28s ease-in-out infinite alternate-reverse; opacity: .7 }
+@keyframes drift { to { transform: translate(18vmax, 12vmax) scale(1.15) } }
+.stage .mesh { position: absolute; inset: -10%; z-index: -1; pointer-events: none; filter: blur(70px) saturate(1.1); opacity: .9 }
+.stage .mesh i { position: absolute; border-radius: 50%; width: 75vmax; height: 75vmax }
+.stage .mesh i:nth-child(1) { background: radial-gradient(closest-side, var(--m1), transparent); left: -10vmax; top: -15vmax; animation: m1 26s ease-in-out infinite alternate }
+.stage .mesh i:nth-child(2) { background: radial-gradient(closest-side, var(--m2), transparent); right: -15vmax; top: 5vmax; animation: m2 32s ease-in-out infinite alternate }
+.stage .mesh i:nth-child(3) { background: radial-gradient(closest-side, var(--m3), transparent); left: 20vmax; bottom: -30vmax; animation: m1 38s ease-in-out infinite alternate-reverse }
+@keyframes m1 { to { transform: translate(22vmax, 14vmax) scale(1.2) } }
+@keyframes m2 { to { transform: translate(-26vmax, 10vmax) scale(.85) } }
+.stage canvas.silk { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none }
+@media (prefers-reduced-motion: reduce) { .stage .mesh i { animation: none } }
+.stage .grain { position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .14; mix-blend-mode: overlay; background-size: 180px }
+@media (prefers-reduced-motion: reduce) { .stage .glow::before, .stage .glow::after { animation: none } }
+.stage::after { content: ""; position: absolute; inset: auto 0 0; height: 38%; z-index: -1; background: linear-gradient(transparent, var(--bg)) }
+.hero { padding-top: clamp(48px, 8vw, 120px) }
+/* вариант по центру: экран целиком, название и подпись посередине, без фото */
+.center .stage { min-height: 100svh; display: grid; align-items: center; padding-bottom: 72px }
+.center .hero { padding-top: 0; text-align: center }
+.center .hero h1 .sub { margin-left: 0 }
+.center .hero-top .cta { justify-content: center }
+.center .hero h1 .big { letter-spacing: .02em }
+.center .stage::after { height: 30% }
+.center .stage > * { min-width: 0; width: 100% }
+.center .band { display: none }
+.big .w { display: inline }
+.hero h1 { font-weight: 500; font-family: var(--fd) }
+.hero-top { position: relative; --big: clamp(30px, 9.6vw, 150px) }
+.hero h1 .big { display: block; font-size: var(--big); line-height: .82; letter-spacing: -.04em; text-transform: uppercase; font-weight: 600 }
+.hero h1 .sub { display: block; font-size: clamp(34px, 5.4vw, 86px); line-height: 1; font-style: italic; color: var(--acc2); margin: .25em 0 0 clamp(0px, 22vw, 330px); letter-spacing: -.01em }
+/* кнопки под подзаголовком с тем же отступом; размер растёт вместе с заголовком, наехать некуда */
+/* на ПК кнопок под заголовком нет: заказ и номер в шапке; на телефоне кнопки под заголовком */
+.hero-top .cta { display: none }
+.bar .tel { font-weight: 600; font-size: 15px; text-decoration: none; margin-right: 6px; opacity: .9 }
+.bar .tel:hover { opacity: 1; color: var(--acc) }
+/* три фото в ряд, среднее ниже: кадры уменьшаются из больших, поэтому остаются резкими */
+.band { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: clamp(48px, 6vw, 88px); padding-bottom: 48px }
+.band figure { overflow: hidden; border-radius: var(--r) }
+.band figure:nth-child(2) { transform: translateY(48px) }
+.band img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; transform: scale(1.08); transition: transform 1.6s cubic-bezier(.2,.7,.2,1) }
+.band.in img { transform: scale(1) }
+
+.marquee { border-block: 1px solid var(--line); margin-top: clamp(48px, 6vw, 80px); overflow: hidden; white-space: nowrap }
+.marquee div { display: inline-flex; gap: 48px; padding: 20px 0; animation: run 38s linear infinite; font: italic 500 clamp(24px, 2.6vw, 36px)/1 var(--fd) }
+.marquee span::after { content: "\2726"; margin-left: 48px; color: var(--acc); font-style: normal; font-size: .55em; vertical-align: middle }
+@keyframes run { to { transform: translateX(-50%) } }
+
+section { padding: clamp(72px, 9vw, 128px) 0 0 }
+h2 { font: 500 clamp(44px, 6vw, 92px)/.95 var(--fd); letter-spacing: -.02em; margin-bottom: clamp(28px, 4vw, 48px) }
+
+/* каталог: одна и та же сетка у всех строк, цена в колонке фиксированной ширины по правому краю */
+.rows { border-top: 1px solid var(--line) }
+.row { display: grid; grid-template-columns: 64px 112px minmax(0, 1fr) minmax(0, 1fr) 150px; gap: 28px; align-items: center; width: 100%; padding: 20px 0;
+  border: 0; border-bottom: 1px solid var(--line); background: none; color: inherit; font: inherit; text-align: left; cursor: pointer }
+.row .no { font: 500 clamp(44px, 4.4vw, 64px)/1 var(--fd); font-variant-numeric: lining-nums tabular-nums; color: color-mix(in srgb, var(--acc) 70%, transparent) }
+.row h3 { font: 500 clamp(28px, 3.2vw, 46px)/1.05 var(--fd); transition: color .25s, transform .35s }
+.row p { color: var(--muted); font-size: 15px }
+.row .from { font-weight: 600; white-space: nowrap; text-align: right }
+.row .from::after { content: "\2192"; display: inline-block; margin-left: 8px; transition: transform .25s; color: var(--acc) }
+.row img { width: 112px; height: 140px; object-fit: cover; border-radius: 8px; transition: transform .4s }
+.row:hover img { transform: scale(1.04) }
+.row:hover h3 { color: var(--acc); transform: translateX(10px) }
+.row:hover .from::after { transform: translateX(5px) }
+
+.mosaic { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, minmax(180px, 22vw)); gap: 12px }
+.mosaic figure { overflow: hidden; border-radius: var(--r); position: relative }
+.mosaic figure:first-child { grid-column: span 2; grid-row: span 2 }
+.mosaic img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2,.7,.2,1) }
+.mosaic figure:hover img { transform: scale(1.05) }
+.mosaic figcaption { position: absolute; left: 14px; bottom: 12px; font-size: 13px; padding: 6px 11px; border-radius: 8px;
+  background: color-mix(in srgb, var(--bg) 70%, transparent); backdrop-filter: blur(8px) }
+
+/* цены: разделы в две колонки, цены по правому краю одной колонки */
+.acc { display: grid; grid-template-columns: 1fr 1fr; gap: 0 56px; align-items: stretch }
+.acc > details:nth-child(-n+2) { border-top: 1px solid var(--line) }
+details { border-bottom: 1px solid var(--line) }
+summary { list-style: none; display: flex; justify-content: space-between; align-items: center; padding: 22px 0; cursor: pointer;
+  font: 500 clamp(26px, 2.5vw, 34px)/1.1 var(--fd) }
+summary::-webkit-details-marker { display: none }
+summary i { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); position: relative; flex: none; color: var(--muted); transition: transform .3s, color .2s, border-color .2s }
+summary:hover i { color: var(--acc); border-color: var(--acc) }
+summary i::before, summary i::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 12px; height: 1.5px; background: currentColor; transform: translate(-50%, -50%) }
+summary i::after { transform: translate(-50%, -50%) rotate(90deg) }
+details[open] summary i { transform: rotate(45deg) }
+.pl { padding: 0 0 18px }
+.pl button { display: grid; grid-template-columns: minmax(0, 1fr) 124px; gap: 16px; width: 100%; align-items: baseline; padding: 9px 0; background: none; border: 0;
+  color: inherit; font: inherit; font-size: 16px; cursor: pointer; text-align: left }
+.pl button b { font-weight: 600; white-space: nowrap; text-align: right }
+.pl button:hover span { color: var(--acc) }
+
+/* шаги: иконка в скруглённом квадрате, заголовок, текст */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px }
+.step { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r); padding: 28px }
+.step svg { width: 52px; height: 52px; padding: 13px; border-radius: 12px; background: color-mix(in srgb, var(--acc) 16%, transparent);
+  stroke: var(--acc); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round }
+.step h3 { font: 500 30px/1.1 var(--fd); margin: 22px 0 8px }
+.step p { color: color-mix(in srgb, var(--ink) 72%, transparent); font-size: 16px }
+
+/* контакты: крупный адрес слева, карта справа */
+.contact { margin-top: clamp(72px, 9vw, 128px); background: var(--paper); padding: clamp(56px, 7vw, 96px) 0 }
+.contact .wrap { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(32px, 4vw, 64px); align-items: stretch }
+.track.drag, .track.drag * { cursor: grabbing !important; user-select: none }
+.contact address { font: 500 clamp(44px, 5.6vw, 92px)/.98 var(--fd); font-style: normal; letter-spacing: -.02em }
+.contact dl { display: grid; grid-template-columns: auto 1fr; gap: 10px 28px; margin: 36px 0; font-size: 18px }
+.contact dt { color: var(--muted) }
+.contact dd { margin: 0; font-weight: 500 }
+.contact dd a { text-decoration: none }
+.contact .cta { display: flex; gap: 10px; flex-wrap: wrap }
+.map { border-radius: var(--r); overflow: hidden; min-height: 420px; border: 1px solid var(--line); background: var(--bg) }
+.map .leaflet-container { width: 100%; height: 100%; min-height: 420px; background: var(--bg); font: 13px var(--fb) }
+.map .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.82) contrast(.92) saturate(.35) sepia(.15) }
+.map .leaflet-control-zoom a { background: var(--paper); color: var(--ink); border-color: var(--line) }
+.map .leaflet-control-attribution { background: color-mix(in srgb, var(--bg) 75%, transparent); color: var(--muted) }
+.map .leaflet-control-attribution a { color: var(--ink) }
+.map .leaflet-popup-content-wrapper, .map .leaflet-popup-tip { background: var(--paper); color: var(--ink); border-radius: var(--r) }
+.map .leaflet-popup-content { margin: 14px 16px; line-height: 1.5 }
+.map .leaflet-popup-content a { color: var(--acc) }
+.pin { position: relative; width: 44px; height: 44px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--acc); border: 3px solid var(--bg);
+  box-shadow: 0 0 0 10px color-mix(in srgb, var(--acc) 22%, transparent), 0 10px 24px rgba(0,0,0,.4) }
+.pin::after { content: ""; position: absolute; inset: 12px; border-radius: 50%; background: var(--bg) }
+
+footer { padding: 36px 0 110px; font-size: 13px; color: var(--muted) }
+footer .wrap { display: grid; gap: 10px }
+footer nav { display: flex; flex-wrap: wrap; gap: 6px 22px }
+
+.toast { position: fixed; z-index: 60; padding: 9px 14px; border-radius: 8px; background: var(--ink); color: var(--bg); font: 600 14px/1 var(--fb);
+  pointer-events: none; opacity: 0; transform: translate(-50%, 6px); transition: opacity .2s, transform .2s }
+.toast.on { opacity: 1; transform: translate(-50%, 0) }
+.fab { position: fixed; right: 16px; bottom: 16px; z-index: 40; width: 60px; height: 60px; border-radius: 16px; display: none; place-items: center;
+  background: var(--wa); color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,.35) }
+.fab .ico { width: 28px; height: 28px }
+
+#order { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px; visibility: hidden; opacity: 0; transition: opacity .25s, visibility .25s }
+#order.open { visibility: visible; opacity: 1 }
+#order .bg { position: absolute; inset: 0; background: rgba(0,0,0,.55); backdrop-filter: blur(4px) }
+.dlg { position: relative; width: min(440px, 100%); background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 28px;
+  transform: translateY(16px); transition: transform .3s }
+#order.open .dlg { transform: none }
+.dlg h3 { font: 500 32px/1.1 var(--fd); padding-right: 40px }
+.dlg .x { position: absolute; right: 16px; top: 16px; width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--line); background: none; color: inherit; cursor: pointer; font-size: 15px }
+.ways { display: grid; gap: 8px; margin: 22px 0 16px }
+.ways a { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--r); text-decoration: none; font-weight: 500 }
+.ways a:hover { border-color: var(--acc) }
+.ways small { margin-left: auto; color: var(--muted); font-size: 13px; font-weight: 400 }
+.dot { width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center; color: #fff }
+.dlg p { font-size: 12px; color: var(--muted) }
+
+.js .up { opacity: 0; transform: translateY(26px); transition: opacity .7s, transform .7s cubic-bezier(.2,.7,.2,1) }
+.js .up.in { opacity: 1; transform: none }
+@media (prefers-reduced-motion: reduce) { .marquee div { animation: none } .js .up { opacity: 1; transform: none } .band img { transform: none } }
+
+@media (max-width: 900px) {
+  .bar { grid-template-columns: auto 1fr; height: 64px } .bar nav { display: none } .bar .right .sq { display: none }
+  .stage { padding-top: 64px }
+  .hero h1 .sub { margin-left: 0 }
+  /* по центру на телефоне: название в две строки крупно, под кнопками три работы */
+  .center .big .w { display: block } .center .hero h1 .big { font-size: min(27vw, 150px); line-height: .9 }
+  .center .hero h1 .sub { font-size: min(9.4vw, 44px); margin-top: .35em }
+  .center .stage { min-height: 0; padding-top: 104px }
+  .center .hero-top .cta { justify-content: stretch }
+  .center .band { display: grid; margin-top: 36px } .center .band img { transform: none }
+  .hero-top .cta { display: grid; gap: 12px; margin-top: 28px } .hero-top .btn { padding: 18px 24px; font-size: 16px } .bar .tel { display: none }
+  .band { gap: 8px; padding-bottom: 24px } .band figure:nth-child(2) { transform: translateY(24px) }
+  .row { grid-template-columns: 72px minmax(0, 1fr); gap: 4px 16px; padding: 18px 0 }
+  .row img { grid-row: span 3; width: 72px; height: 90px }
+  .row .no { display: none } .row h3 { font-size: min(7.4vw, 28px); overflow-wrap: anywhere } .row .from { text-align: left } .row:hover h3 { transform: none }
+  .mosaic { grid-template-columns: 1fr 1fr; grid-template-rows: none; grid-auto-rows: 44vw }
+  .mosaic figure:first-child { grid-row: span 1 }
+  .acc { grid-template-columns: 1fr } .acc > details:nth-child(2) { border-top: 0 }
+  .steps { grid-template-columns: 1fr }
+  .contact .wrap { grid-template-columns: minmax(0, 1fr) } .contact address { font-size: min(10.5vw, 44px) } .contact dl { grid-template-columns: minmax(0, auto) minmax(0, 1fr) }
+  .map, .map .leaflet-container { min-height: 320px }
+  .fab { display: grid }
+}
+
+.row .from:empty { display: none }
+@media (max-width: 900px) { .bar .logo { font-size: 24px; line-height: 1.05 } }
+
+.track { --g: clamp(10px, 1.2vw, 16px); gap: var(--g); padding: 0 !important; scroll-padding: 0 !important; box-sizing: border-box;
+  width: calc(min(100%, 1320px) - 2 * var(--pad)); margin-inline: auto; cursor: grab }
+.track > * { flex: 0 0 calc((100% - 2 * var(--g)) / 3) !important; width: auto !important; height: auto !important; max-height: none !important; aspect-ratio: 2 / 3 }
+@media (max-width: 900px) { .track > * { flex-basis: 78% !important } }
+</style>
+</head>
+<body class="center">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-wa" viewBox="0 0 24 24"><path d="M12 2a9.9 9.9 0 0 0-8.5 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm5.4 14c-.2.6-1.3 1.2-1.8 1.3-.5 0-1 .2-3.2-.7-2.7-1.1-4.4-3.9-4.6-4.1-.1-.2-1.1-1.5-1.1-2.8 0-1.4.7-2 1-2.3.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.2 1.6 1.9 1.1 1 2 1.3 2.3 1.4.3.2.5.1.6 0l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.8-.1 1.4Z"/></symbol>
+  <symbol id="i-tg" viewBox="0 0 24 24"><path d="m21.9 4.4-3.2 15c-.2 1.1-.9 1.3-1.7.8l-4.8-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.4-.1-.6-.6-.2l-11 6.9-4.7-1.5c-1-.3-1-1 .2-1.5L20.5 3c.9-.3 1.7.2 1.4 1.4Z"/></symbol>
+  <symbol id="i-vk" viewBox="0 0 24 24"><path d="M12.9 18.2C6.8 18.2 3.3 14 3.1 7h3.1c.1 5.1 2.4 7.3 4.2 7.7V7h2.9v4.4c1.8-.2 3.7-2.2 4.3-4.4h2.9a8.6 8.6 0 0 1-3.9 5.6 9 9 0 0 1 4.6 5.6h-3.2a5.6 5.6 0 0 0-4.7-4v4h-.4Z"/></symbol>
+  <symbol id="i-tel" viewBox="0 0 24 24"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.3 0 .7-.2 1l-2.3 2.2Z"/></symbol>
+</svg>
+<header id="hdr"><div class="wrap bar">
+  <nav aria-label="Разделы"><a href="#catalog">Услуги</a><a href="#contacts">Контакты</a></nav>
+  <a class="logo" href="#top">Vitae</a>
+  <div class="right"><a class="tel" href="tel:+79248541115">+7 924 854-11-15</a><a class="btn sm" href="https://wa.me/79248541115" target="_blank" rel="noopener">Записаться</a></div>
+</div></header>
+<main id="top">
+  <div class="stage"><div class="mesh" aria-hidden="true" style="--m1:#5a3216;--m2:#3a2410;--m3:#6b4a1f"><i></i><i></i><i></i></div><div class="grain" aria-hidden="true" style="background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;)"></div>
+    <div class="wrap hero">
+      <div class="hero-top">
+        <h1><span class="big"><span class="w">Ветклиника</span></span><span class="sub">в&nbsp;Магадане</span></h1>
+        <div class="cta"><a class="btn" href="https://wa.me/79248541115" target="_blank" rel="noopener"><svg class="ico"><use href="#i-wa"/></svg>Записаться в WhatsApp</a><a class="btn ghost" href="tel:+79248541115">+7 924 854-11-15</a></div>
+      </div>
+      <div class="band up"><figure><img src="img/b0.jpg" alt="Рыжий кот на приёмном столе"></figure><figure><img src="img/b1.jpg" alt="Кот в кабинете"></figure><figure><img src="img/b2.jpg" alt="Абиссинская кошка с букетом"></figure></div>
+    </div>
+    
+  </div>
+  <section id="catalog"><div class="wrap"><h2 class="up">Услуги</h2><div class="rows"><button class="row up" type="button" data-book="Приём и лечение">
+      <span class="no">1</span><img src="img/r0.jpg" alt="" loading="lazy"><h3>Приём и лечение</h3><p>Осмотр, диагноз и план лечения для кошек и собак.</p>
+      <span class="from"></span></button><button class="row up" type="button" data-book="Анализы">
+      <span class="no">2</span><img src="img/r1.jpg" alt="" loading="lazy"><h3>Анализы</h3><p>Сдаём на месте, результат быстро, лечение корректируем по нему.</p>
+      <span class="from"></span></button><button class="row up" type="button" data-book="Хирургия">
+      <span class="no">3</span><img src="img/r2.jpg" alt="" loading="lazy"><h3>Хирургия</h3><p>Операции и уход после них.</p>
+      <span class="from"></span></button><button class="row up" type="button" data-book="Стационар">
+      <span class="no">4</span><img src="img/r3.jpg" alt="" loading="lazy"><h3>Стационар</h3><p>Можно оставить питомца под наблюдением на день.</p>
+      <span class="from"></span></button><button class="row up" type="button" data-book="Экзотические животные">
+      <span class="no">5</span><img src="img/r4.jpg" alt="" loading="lazy"><h3>Экзотические животные</h3><p>Рептилии, птицы, грызуны.</p>
+      <span class="from"></span></button><button class="row up" type="button" data-book="Корма и препараты">
+      <span class="no">6</span><img src="img/r5.jpg" alt="" loading="lazy"><h3>Корма и препараты</h3><p>Лечебные корма и всё, что назначил врач.</p>
+      <span class="from"></span></button></div></div></section>
+  
+  <section id="studio"><div class="wrap"><h2 class="up">Клиника</h2><div class="mosaic"><figure class="up"><img src="img/m0.jpg" alt="Холл клиники" loading="lazy"><figcaption>Холл клиники</figcaption></figure><figure class="up"><img src="img/m1.jpg" alt="Врачи за работой" loading="lazy"><figcaption>Врачи за работой</figcaption></figure><figure class="up"><img src="img/m2.jpg" alt="Врач с пациентом" loading="lazy"><figcaption>Врач с пациентом</figcaption></figure><figure class="up"><img src="img/m3.jpg" alt="Врач с питомцем" loading="lazy"><figcaption>Врач с питомцем</figcaption></figure><figure class="up"><img src="img/m4.jpg" alt="Врач с птицей" loading="lazy"><figcaption>Врач с птицей</figcaption></figure></div></div></section>
+  
+  
+  <section id="how"><div class="wrap"><h2 class="up">Как записаться</h2><div class="steps"><div class="step up"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9.5h8M8 12.5h5"/></svg><h3>Напишите или позвоните</h3><p>Расскажите, что беспокоит питомца, подскажем, когда прийти.</p></div><div class="step up"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><h3>Выберите время</h3><p>Будни с 9, в выходные с 10 до 16.</p></div><div class="step up"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.1-7-11.5a7 7 0 0 1 14 0C19 14.9 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg><h3>Приходите</h3><p>Арманская, 28, первый этаж.</p></div></div></div></section>
+  <div class="contact" id="contacts"><div class="wrap">
+    <div>
+      <address class="up">Магадан,<br>улица Арманская, 28</address>
+      <dl><dt>Время</dt><dd>Пн-пт с 9:00, сб-вс 10:00-16:00</dd><dt>Телефон</dt><dd><a href="tel:+79248541115">+7 924 854-11-15</a></dd></dl>
+      <div class="cta"><a class="btn" href="https://wa.me/79248541115" target="_blank" rel="noopener"><svg class="ico"><use href="#i-wa"/></svg>Написать в WhatsApp</a>
+        <a class="btn ghost" href="https://2gis.ru/magadan/firm/70000001066710626" target="_blank" rel="noopener">Маршрут в 2ГИС</a></div>
+    </div>
+    <div class="map"><div id="map" role="region" aria-label="Vitae на карте"></div></div>
+  </div></div>
+</main>
+<footer><div class="wrap">
+  <nav aria-label="Документы"><a href="privacy.html">Политика конфиденциальности</a><a href="consent.html">Согласие на обработку персональных данных</a></nav>
+  <p>[ИП или ООО], ИНН [ИНН], ОГРН [ОГРН]. Адрес: Магадан, улица Арманская, 28.</p>
+</div></footer>
+<a class="fab" href="https://wa.me/79248541115" target="_blank" rel="noopener" aria-label="Написать в WhatsApp"><svg class="ico"><use href="#i-wa"/></svg></a>
+<div id="order" aria-hidden="true"><div class="bg" data-close></div><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="o-name">
+  <button class="x" type="button" data-close aria-label="Закрыть">&#x2715;</button>
+  <h3 id="o-name"></h3>
+  <div class="ways"><a id="o-wa" target="_blank" rel="noopener"><span class="dot" style="background:var(--wa)"><svg class="ico"><use href="#i-wa"/></svg></span>WhatsApp<small>текст уже готов</small></a>
+  <a href="tel:+79248541115"><span class="dot" style="background:var(--acc);color:var(--bg)"><svg class="ico"><use href="#i-tel"/></svg></span>Позвонить<small>+7 924 854-11-15</small></a></div>
+  <p>Обращаясь, вы соглашаетесь с <a href="privacy.html">политикой конфиденциальности</a> и <a href="consent.html">обработкой персональных данных</a>.</p>
+</div></div>
+<script>
+document.documentElement.classList.add("js");
+const WA = "79248541115";
+const io = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target) } }), { threshold: .12 }) : null;
+document.querySelectorAll(".up").forEach((el, i) => { el.style.transitionDelay = (i % 3) * 60 + "ms"; io ? io.observe(el) : el.classList.add("in") });
+const hdr = document.getElementById("hdr"), blur = document.getElementById("blur");
+const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let ticking = false;
+const onScroll = () => {
+  hdr.classList.toggle("solid", scrollY > 30);
+  if (blur && !still && scrollY < innerHeight * 2) blur.style.transform = `translate3d(0, ${scrollY * .3}px, 0)`;
+  ticking = false;
+};
+addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll) } }, { passive: true });
+onScroll();
+// шёлк: тонкие линии волнами, похоже на пряди, но абстрактно; рисуется только когда первый экран виден
+const silk = document.getElementById("silk");
+if (silk) {
+  const ctx = silk.getContext("2d"), col = getComputedStyle(document.documentElement).getPropertyValue("--acc").trim();
+  let W = 0, Hh = 0, on = true, t0 = performance.now();
+  const size = () => { const r = silk.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2); W = r.width; Hh = r.height; silk.width = W * d; silk.height = Hh * d; ctx.setTransform(d, 0, 0, d, 0, 0) };
+  const N = 34;
+  const draw = now => {
+    const t = still ? 0 : (now - t0) / 1000;
+    ctx.clearRect(0, 0, W, Hh);
+    for (let i = 0; i < N; i++) {
+      const k = i / N, base = Hh * (.18 + k * .7), amp = Hh * (.06 + .05 * Math.sin(i * 1.7));
+      ctx.beginPath();
+      for (let x = -20; x <= W + 20; x += 14) {
+        const u = x / W;
+        const y = base + Math.sin(u * 5.2 + t * .35 + i * .21) * amp + Math.sin(u * 11 - t * .22 + i * .5) * amp * .35 + Math.sin(u * 2.1 + t * .12) * Hh * .08;
+        x < 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = col; ctx.globalAlpha = .1 + .38 * Math.pow(Math.sin(k * Math.PI), 2); ctx.lineWidth = 1.2;
+      ctx.stroke();
+    }
+    if (on && !still) requestAnimationFrame(draw);
+  };
+  size(); addEventListener("resize", () => { size(); if (still) draw(0) });
+  if ("IntersectionObserver" in window) new IntersectionObserver(es => { const v = es[0].isIntersecting; if (v && !on) { on = true; requestAnimationFrame(draw) } on = v }).observe(silk);
+  requestAnimationFrame(draw);
+}
+const PHONE = "+7 924 854-11-15";
+if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
+  const toast = Object.assign(document.createElement("div"), { className: "toast", role: "status" });
+  document.body.append(toast);
+  let hide;
+  document.addEventListener("click", e => {
+    const a = e.target.closest('a[href^="tel:"]'); if (!a) return;
+    e.preventDefault();
+    const r = a.getBoundingClientRect(), say = t => { toast.textContent = t; toast.style.left = r.left + r.width / 2 + "px"; toast.style.top = r.top - 44 + "px";
+      toast.classList.add("on"); clearTimeout(hide); hide = setTimeout(() => toast.classList.remove("on"), 1800) };
+    const old = () => { const t = Object.assign(document.createElement("textarea"), { value: PHONE }); t.style.cssText = "position:fixed;opacity:0";
+      document.body.append(t); t.select(); let ok = false; try { ok = document.execCommand("copy") } catch (_) {} t.remove(); return ok };
+    (navigator.clipboard ? navigator.clipboard.writeText(PHONE) : Promise.reject()).then(() => true, old).then(ok => say(ok ? "Номер скопирован" : PHONE));
+  });
+}
+const box = document.getElementById("order");
+function openBook(what) {
+  document.getElementById("o-name").textContent = what;
+  document.getElementById("o-wa").href = `https://wa.me/${WA}?text=${encodeURIComponent(`Здравствуйте! Интересует: ${what}.`)}`;
+  box.classList.add("open"); box.setAttribute("aria-hidden", "false");
+}
+const closeBook = () => { box.classList.remove("open"); box.setAttribute("aria-hidden", "true") };
+document.addEventListener("click", e => { const b = e.target.closest("[data-book]"); if (b) return openBook(b.dataset.book); if (e.target.closest("[data-close]")) closeBook() });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeBook() });
+// тёмная карта без рекламы: Leaflet + тайлы OSM, затемнённые фильтром, грузится, когда раздел контактов близко
+const mapEl = document.getElementById("map");
+const initMap = () => {
+  if (!window.L || mapEl.dataset.ready) return; mapEl.dataset.ready = 1;
+  const pt = [59.630011, 150.785807], m = L.map(mapEl, { scrollWheelZoom: false, attributionControl: false }).setView(pt, 16);
+  L.control.attribution({ prefix: false }).addTo(m);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(m);
+  L.marker(pt, { icon: L.divIcon({ className: "", html: '<div class="pin"></div>', iconSize: [44, 44], iconAnchor: [22, 44], popupAnchor: [0, -46] }) })
+    .addTo(m).bindPopup('<b>Vitae</b><br>улица Арманская, 28<br><a href="https://2gis.ru/magadan/firm/70000001066710626" target="_blank" rel="noopener">Маршрут в 2ГИС</a>');
+};
+const mio = "IntersectionObserver" in window ? new IntersectionObserver(es => { if (es[0].isIntersecting) { initMap(); mio.disconnect() } }, { rootMargin: "400px" }) : null;
+addEventListener("load", () => mio ? mio.observe(mapEl) : initMap());
+
+document.querySelectorAll(".track").forEach(t => {
+  let down = false, moved = false, sx = 0, sl = 0;
+  t.addEventListener("dragstart", e => e.preventDefault());
+  t.addEventListener("pointerdown", e => { if (e.pointerType !== "mouse" || e.button) return; down = true; moved = false; sx = e.clientX; sl = t.scrollLeft });
+  addEventListener("pointermove", e => {
+    if (!down) return;
+    const d = e.clientX - sx;
+    if (!moved && Math.abs(d) < 6) return;
+    moved = true; t.classList.add("drag"); t.style.scrollSnapType = "none"; t.scrollLeft = sl - d;
+  });
+  addEventListener("pointerup", () => {
+    if (!down) return;
+    down = false; t.classList.remove("drag");
+    if (!moved) return;
+    const pad = parseFloat(getComputedStyle(t).paddingLeft), box = t.getBoundingClientRect().left;
+    const near = [...t.children].reduce((a, c) => Math.abs(c.getBoundingClientRect().left - box - pad) < Math.abs(a.getBoundingClientRect().left - box - pad) ? c : a);
+    t.scrollBy({ left: near.getBoundingClientRect().left - box - pad, behavior: "smooth" });
+    setTimeout(() => t.style.scrollSnapType = "", 450);
+  });
+  t.addEventListener("click", e => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false } }, true);
+});
+
+function fitBig() {
+  document.querySelectorAll(".hero h1 .big").forEach(b => {
+    b.style.fontSize = "";
+    const r = document.createRange(); r.selectNodeContents(b);
+    for (let i = 0; i < 3; i++) {  // наклон и разрядка дают пару px сверху, поэтому до трёх подгонок
+      const w = r.getBoundingClientRect().width, room = b.closest("h1").clientWidth;
+      if (w <= room) break;
+      b.style.fontSize = parseFloat(getComputedStyle(b).fontSize) * room / w * .97 + "px";
+    }
+  });
+}
+fitBig(); document.fonts && document.fonts.ready.then(fitBig);
+addEventListener("resize", fitBig);
+</script>
+<script>
+(function(){try{
+  var s='vitae';
+  if(location.search.indexOf('me')>-1)localStorage.setItem('own','1');
+  if(localStorage.getItem('own')||location.hostname!=='sites49.github.io')return;
+  var d=new Date(Date.now()+11*36e5).toISOString().slice(0,10);
+  ['all',d].forEach(function(k){fetch('https://abacus.jasoncameron.dev/hit/sites49/'+s+'-'+k,{mode:'cors'}).catch(function(){})});
+}catch(e){}})();
+</script>
+</body>
+</html>
